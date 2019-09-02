@@ -1,0 +1,35 @@
+version: '3.1'
+
+services:
+
+  wordpress:
+    depends_on:
+      - db
+#    image: wordpress:5.1.1-php7.3-apache
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: admin
+      WORDPRESS_DB_PASSWORD: 123456
+      WORDPRESS_DB_NAME: wp_database
+
+#    working_dir: /var/www/html
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: wp_database
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 123456
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+
+    volumes:
+      - ./database/mysql:/var/lib/mysql
